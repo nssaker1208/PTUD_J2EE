@@ -1,49 +1,59 @@
 package phattrienungdungj2ee.bai2.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import phattrienungdungj2ee.bai2.model.Book;
 import phattrienungdungj2ee.bai2.service.BookService;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/books") // Đường dẫn gốc cho tất cả API
+@Controller // Lưu ý: Dùng @Controller thay vì @RestController
+@RequestMapping("/books")
 public class BookController {
 
     @Autowired
     private BookService bookService;
 
-    // 1. API lấy danh sách sách (GET)
+    // 1. Hiển thị danh sách sách
     @GetMapping
-    public List<Book> getAllBooks() {
-        return bookService.getAllBooks();
+    public String listBooks(Model model) {
+        model.addAttribute("books", bookService.getAllBooks());
+        return "books"; // Trả về file books.html
     }
 
-    // 2. API lấy sách theo ID (GET)
-    @GetMapping("/{id}")
-    public Book getBookById(@PathVariable int id) {
-        return bookService.getBookById(id);
+    // 2. Hiển thị form thêm sách
+    @GetMapping("/add")
+    public String addBookForm(Model model) {
+        model.addAttribute("book", new Book());
+        return "add-book"; // Trả về file add-book.html
     }
 
-    // 3. API thêm sách mới (POST)
-    @PostMapping
-    public String addBook(@RequestBody Book book) {
+    // 3. Xử lý thêm sách mới
+    @PostMapping("/add")
+    public String addBook(@ModelAttribute Book book) {
         bookService.addBook(book);
-        return "Book added successfully!";
+        return "redirect:/books"; // Chuyển hướng về trang danh sách
     }
 
-    // 4. API cập nhật sách (PUT)
-    @PutMapping("/{id}")
-    public String updateBook(@PathVariable int id, @RequestBody Book updatedBook) {
-        bookService.updateBook(id, updatedBook);
-        return "Book updated successfully!";
+    // 4. Hiển thị form sửa sách
+    @GetMapping("/edit/{id}")
+    public String editBookForm(@PathVariable Long id, Model model) {
+        Book book = bookService.getBookById(id);
+        model.addAttribute("book", book);
+        return "edit-book"; // Trả về file edit-book.html
     }
 
-    // 5. API xóa sách (DELETE)
-    @DeleteMapping("/{id}")
-    public String deleteBook(@PathVariable int id) {
+    // 5. Xử lý cập nhật sách
+    @PostMapping("/edit")
+    public String updateBook(@ModelAttribute Book book) {
+        bookService.updateBook(book);
+        return "redirect:/books";
+    }
+
+    // 6. Xử lý xóa sách
+    @GetMapping("/delete/{id}")
+    public String deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
-        return "Book deleted successfully!";
+        return "redirect:/books";
     }
 }

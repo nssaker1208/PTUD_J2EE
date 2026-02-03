@@ -1,7 +1,7 @@
 package phattrienungdungj2ee.bai2.model;
 
 public class Book {
-    private int id;
+    private Long id;
     private String title;
     private String author;
 
@@ -10,18 +10,18 @@ public class Book {
     }
 
     // Constructor có tham số
-    public Book(int id, String title, String author) {
+    public Book(Long id, String title, String author) {
         this.id = id;
         this.title = title;
         this.author = author;
     }
 
     // Getters và Setters
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
